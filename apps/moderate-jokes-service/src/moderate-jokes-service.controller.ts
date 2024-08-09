@@ -3,7 +3,9 @@ import { ModerateJokesServiceService } from './moderate-jokes-service.service';
 
 @Controller()
 export class ModerateJokesServiceController {
-  constructor(private readonly moderateJokesServiceService: ModerateJokesServiceService) {}
+  constructor(
+    private readonly moderateJokesServiceService: ModerateJokesServiceService,
+  ) {}
 
   @Get()
   getHello(): string {

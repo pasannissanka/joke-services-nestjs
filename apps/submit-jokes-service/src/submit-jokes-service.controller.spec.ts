@@ -11,7 +11,9 @@ describe('SubmitJokesServiceController', () => {
       providers: [SubmitJokesServiceService],
     }).compile();
 
-    submitJokesServiceController = app.get<SubmitJokesServiceController>(SubmitJokesServiceController);
+    submitJokesServiceController = app.get<SubmitJokesServiceController>(
+      SubmitJokesServiceController,
+    );
   });
 
   describe('root', () => {

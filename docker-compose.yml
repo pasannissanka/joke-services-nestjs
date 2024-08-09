@@ -1,0 +1,30 @@
+version: '3'
+services:
+  deliver-jokes-service:
+    container_name: deliver-jokes-service
+    build:
+      context: .
+      args:
+        - APP=deliver-jokes-service
+    restart: always
+    ports:
+      - 3000:8001
+  submit-jokes-service:
+    container_name: submit-jokes-service
+    build:
+      context: .
+      args:
+        - APP=submit-jokes-service
+    restart: always
+    ports:
+      - 3001:8003
+  moderate-jokes-service:
+    container_name: moderate-jokes-service
+    build:
+      context: .
+      args:
+        - APP=moderate-jokes-service
+    restart: always
+    ports:
+      - 3002:8002
+  

@@ -3,6 +3,6 @@ import { ModerateJokesServiceModule } from './moderate-jokes-service.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(ModerateJokesServiceModule);
-  await app.listen(3000);
+  await app.listen(8002);
 }
 bootstrap();
