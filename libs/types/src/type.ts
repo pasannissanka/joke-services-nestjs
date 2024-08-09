@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Joke } from '../../../apps/deliver-jokes-service/src/entities/Joke.entity';
 import { JokeType } from '../../../apps/deliver-jokes-service/src/entities/JokeType.entity';
+import { SubmittedJoke } from '../../../apps/submit-jokes-service/src/entities/submittedJoke.entity';
 
 export class ResponseDto<T> {
   @ApiProperty()
@@ -81,6 +82,27 @@ export class JokeDto {
     dto.joke = joke?.joke;
     dto.type = JokeTypeDto?.fromEntity(joke.type);
     dto.createdAt = joke?.createdAt;
+    return dto;
+  }
+}
+
+export class SubmittedJokeDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  joke: string;
+
+  @ApiProperty()
+  joke_type_id: string;
+
+  static fromEntity(data: SubmittedJoke) {
+    const dto = new SubmittedJokeDto();
+
+    dto.id = data.id;
+    dto.joke = data.joke;
+    dto.joke_type_id = data.joke_type_id?.toString();
+
     return dto;
   }
 }
