@@ -35,7 +35,7 @@ export class ResponseDto<T> {
 
 export class JokeTypeDto {
   @ApiProperty()
-  id: bigint;
+  id: string;
 
   @ApiProperty()
   type: string;
@@ -48,19 +48,23 @@ export class JokeTypeDto {
 
   static fromEntity(jokeType: JokeType): JokeTypeDto {
     const dto = new JokeTypeDto();
-    dto.id = jokeType.id;
-    dto.type = jokeType.type;
-    dto.jokes = jokeType.jokes
-      .getItems()
-      .map((joke) => JokeDto.fromEntity(joke));
-    dto.createdAt = jokeType.createdAt;
+    dto.id = jokeType.id.toString();
+    dto.type = jokeType?.type;
+
+    if (jokeType?.jokes?.isInitialized()) {
+      dto.jokes = jokeType.jokes
+        .getItems()
+        .map((joke) => JokeDto.fromEntity(joke));
+    }
+
+    dto.createdAt = jokeType?.createdAt;
     return dto;
   }
 }
 
 export class JokeDto {
   @ApiProperty()
-  id: bigint;
+  id: string;
 
   @ApiProperty()
   joke: string;
@@ -73,10 +77,10 @@ export class JokeDto {
 
   static fromEntity(joke: Joke): JokeDto {
     const dto = new JokeDto();
-    dto.id = joke.id;
-    dto.joke = joke.joke;
-    dto.type = JokeTypeDto.fromEntity(joke.type);
-    dto.createdAt = joke.createdAt;
+    dto.id = joke?.id?.toString();
+    dto.joke = joke?.joke;
+    dto.type = JokeTypeDto?.fromEntity(joke.type);
+    dto.createdAt = joke?.createdAt;
     return dto;
   }
 }

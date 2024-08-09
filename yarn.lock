@@ -716,6 +716,14 @@
   resolved "https://registry.yarnpkg.com/@mikro-orm/nestjs/-/nestjs-6.0.2.tgz#0c8d57db1b958b1d7f06a501653a30d88467d72b"
   integrity sha512-3bUBnJ0HwwIjsNPb0n7dfTWayqA5iSLHv/zM9juyBADSpJB2oBAd96QlUqDvNi/RckSg0m+ifLVT0Uw8e0+POg==
 
+"@mikro-orm/seeder@^6.3.4":
+  version "6.3.4"
+  resolved "https://registry.yarnpkg.com/@mikro-orm/seeder/-/seeder-6.3.4.tgz#351390f2b11048db85bcf9fb0d30703babad9f44"
+  integrity sha512-yb+IE/veAbWe0TVwo8ZabyNow+65P04fAsvR8Q37xjeWYFGiOyisSq27ohFRbIYq4dbg651r5nSUuguyT1vxIw==
+  dependencies:
+    fs-extra "11.2.0"
+    globby "11.1.0"
+
 "@nestjs/cli@10.4.3":
   version "10.4.3"
   resolved "https://registry.yarnpkg.com/@nestjs/cli/-/cli-10.4.3.tgz#6496fcde4ab1e843f55b55c554c81c1ca1ee824c"
