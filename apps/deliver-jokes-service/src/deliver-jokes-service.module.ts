@@ -1,10 +1,21 @@
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import config from './db/mikro-orm.config';
 import { DeliverJokesServiceController } from './deliver-jokes-service.controller';
-import { DeliverJokesServiceService } from './deliver-jokes-service.service';
+import { JokesModule } from './joke-module/jokes.module';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    MikroOrmModule.forRootAsync({
+      useFactory: () => ({
+        ...config,
+      }),
+    }),
+    JokesModule,
+  ],
   controllers: [DeliverJokesServiceController],
-  providers: [DeliverJokesServiceService],
+  providers: [],
 })
 export class DeliverJokesServiceModule {}
