@@ -1,8 +1,50 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/joke-services/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/joke-services/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/joke-services",
+  "projects": {
+    "joke-services": {
+      "type": "application",
+      "root": "apps/joke-services",
+      "entryFile": "main",
+      "sourceRoot": "apps/joke-services/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/joke-services/tsconfig.app.json"
+      }
+    },
+    "deliver-jokes-service": {
+      "type": "application",
+      "root": "apps/deliver-jokes-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/deliver-jokes-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/deliver-jokes-service/tsconfig.app.json"
+      }
+    },
+    "submit-jokes-service": {
+      "type": "application",
+      "root": "apps/submit-jokes-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/submit-jokes-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/submit-jokes-service/tsconfig.app.json"
+      }
+    },
+    "moderate-jokes-service": {
+      "type": "application",
+      "root": "apps/moderate-jokes-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/moderate-jokes-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/moderate-jokes-service/tsconfig.app.json"
+      }
+    }
   }
 }
