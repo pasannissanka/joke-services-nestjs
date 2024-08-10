@@ -23,6 +23,17 @@ export class TCPController {
     return ResponseDto.success(data);
   }
 
+  @MessagePattern(MessagePatternTypes.SUBMIT_SVC_GET_NEW_JOKE)
+  async getJokeById(payload: { id: string }) {
+    this.logger.log(
+      `[${MessagePatternTypes.SUBMIT_SVC_GET_NEW_JOKE}] payload: [${JSON.stringify(payload)}]`,
+    );
+
+    const data = await this.submitService.getJokeById(payload.id);
+
+    return ResponseDto.success(data);
+  }
+
   @MessagePattern(MessagePatternTypes.SUBMIT_SVC_MARK_ACCEPTED)
   async markAsAccepted(payload: { id: string }) {
     this.logger.log(

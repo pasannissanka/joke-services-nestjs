@@ -1,13 +1,27 @@
 import { Controller, Logger } from '@nestjs/common';
 import { JokesService } from './jokes.service';
 import { MessagePattern } from '@nestjs/microservices';
-import { MessagePatternTypes, ResponseDto } from '../../../../libs/types/src';
+import {
+  CreateJokeDto,
+  MessagePatternTypes,
+  ResponseDto,
+} from '../../../../libs/types/src';
 
 @Controller()
 export class TCPController {
   private readonly logger = new Logger(TCPController.name);
 
   constructor(private readonly jokesService: JokesService) {}
+
+  @MessagePattern(MessagePatternTypes.DELIVER_SVC_INSERT_JOKE)
+  async createJoke(payload: CreateJokeDto) {
+    this.logger.log(
+      `[${MessagePatternTypes.DELIVER_SVC_INSERT_JOKE}] payload: [${JSON.stringify(payload)}]`,
+    );
+    const data = await this.jokesService.createJoke(payload);
+
+    return ResponseDto.success(data);
+  }
 
   @MessagePattern(MessagePatternTypes.DELIVER_SVC_FETCH_JOKE_TYPES)
   async fetchJokeTypes(payload: { limit: number; page: number }) {

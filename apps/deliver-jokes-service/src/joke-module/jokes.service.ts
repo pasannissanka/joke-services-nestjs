@@ -57,7 +57,9 @@ export class JokesService {
     return JokeDto.fromEntity(joke);
   }
 
-  async createJoke(joke: CreateJokeDto): Promise<Joke> {
+  @EnsureRequestContext<JokesService>((t) => t.jokeRepository)
+  @EnsureRequestContext<JokesService>((t) => t.jokeTypeRepository)
+  async createJoke(joke: CreateJokeDto): Promise<JokeDto> {
     const jokeType = await this.jokeTypeRepository.findOneOrFail({
       id: joke.type,
     });
@@ -69,7 +71,7 @@ export class JokesService {
 
     await this.jokeRepository.getEntityManager().persistAndFlush(newJoke);
 
-    return newJoke;
+    return JokeDto.fromEntity(newJoke);
   }
 
   async createJokeType(type: string): Promise<JokeType> {

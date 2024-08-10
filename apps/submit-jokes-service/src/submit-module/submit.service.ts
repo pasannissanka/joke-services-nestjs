@@ -65,14 +65,18 @@ export class SubmitService {
   }
 
   @EnsureRequestContext<SubmitService>((t) => t.submitJokeRepository)
+  async getJokeById(id: string) {
+    const data = await this.submitJokeRepository.findOneOrFail({
+      id,
+      isAccepted: false,
+    });
+
+    return SubmittedJokeDto.fromEntity(data);
+  }
+
+  @EnsureRequestContext<SubmitService>((t) => t.submitJokeRepository)
   async markAsAccepted(id: string) {
-    const data = await this.submitJokeRepository.findOneOrFail({ id });
-
-    data.isAccepted = true;
-
-    await this.submitJokeRepository
-      .getEntityManager()
-      .upsert(SubmittedJoke, data);
+    await this.submitJokeRepository.nativeUpdate({ id }, { isAccepted: true });
 
     return true;
   }

@@ -5,7 +5,7 @@ export class CreateJokeDto {
   joke: string;
 
   @ApiProperty()
-  type: bigint;
+  type: string;
 }
 
 export class CreateJokeTypeDto {
