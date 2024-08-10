@@ -64,4 +64,13 @@ export class SubmitService {
     await this.submitJokeRepository.getEntityManager().persistAndFlush(data);
     return SubmittedJokeDto.fromEntity(data);
   }
+
+  async paginateJokes(page = 1, limit = 10): Promise<SubmittedJokeDto[]> {
+    const jokes = await this.submitJokeRepository.find(
+      { isAccepted: false },
+      { limit, offset: (page - 1) * limit },
+    );
+
+    return jokes.map((joke) => SubmittedJokeDto.fromEntity(joke));
+  }
 }
