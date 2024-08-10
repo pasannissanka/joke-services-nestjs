@@ -1,40 +1,29 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { SubmittedJoke } from '../entities/submittedJoke.entity';
-import { EntityRepository } from '@mikro-orm/mysql';
+import { EnsureRequestContext, EntityRepository } from '@mikro-orm/mysql';
 import { InjectRepository } from '@mikro-orm/nestjs';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 import {
   JokeTypeDto,
   MessagePatternTypes,
   ResponseDto,
   ResponseStatus,
+  Services,
   SubmitJokeDto,
   SubmittedJokeDto,
 } from '../../../../libs/types/src';
-import {
-  ClientProxy,
-  ClientProxyFactory,
-  Transport,
-} from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
+import { SubmittedJoke } from '../entities/submittedJoke.entity';
 
 @Injectable()
 export class SubmitService {
-  private client: ClientProxy;
-
   private readonly logger = new Logger(SubmitService.name);
 
   constructor(
     @InjectRepository(SubmittedJoke)
     private readonly submitJokeRepository: EntityRepository<SubmittedJoke>,
-  ) {
-    this.client = ClientProxyFactory.create({
-      transport: Transport.TCP,
-      options: {
-        host: '127.0.0.1',
-        port: 8221,
-      },
-    });
-  }
+    @Inject(Services.DELIVER_JOKES_SERVICE)
+    private readonly client: ClientProxy,
+  ) {}
 
   async create(payload: SubmitJokeDto) {
     this.logger.log(`[create] payload: [${JSON.stringify(payload)}]`);
@@ -65,6 +54,7 @@ export class SubmitService {
     return SubmittedJokeDto.fromEntity(data);
   }
 
+  @EnsureRequestContext<SubmitService>((t) => t.submitJokeRepository)
   async paginateJokes(page = 1, limit = 10): Promise<SubmittedJokeDto[]> {
     const jokes = await this.submitJokeRepository.find(
       { isAccepted: false },
@@ -72,5 +62,29 @@ export class SubmitService {
     );
 
     return jokes.map((joke) => SubmittedJokeDto.fromEntity(joke));
+  }
+
+  @EnsureRequestContext<SubmitService>((t) => t.submitJokeRepository)
+  async markAsAccepted(id: string) {
+    const data = await this.submitJokeRepository.findOneOrFail({ id });
+
+    data.isAccepted = true;
+
+    await this.submitJokeRepository
+      .getEntityManager()
+      .upsert(SubmittedJoke, data);
+
+    return true;
+  }
+
+  @EnsureRequestContext<SubmitService>((t) => t.submitJokeRepository)
+  async delete(id: string) {
+    const data = await this.submitJokeRepository.findOneOrFail({ id });
+
+    data.isAccepted = true;
+
+    await this.submitJokeRepository.getEntityManager().removeAndFlush(data);
+
+    return true;
   }
 }
