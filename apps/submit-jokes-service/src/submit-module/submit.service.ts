@@ -4,6 +4,7 @@ import { EntityRepository } from '@mikro-orm/mysql';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import {
   JokeTypeDto,
+  MessagePatternTypes,
   ResponseDto,
   ResponseStatus,
   SubmitJokeDto,
@@ -39,9 +40,12 @@ export class SubmitService {
     this.logger.log(`[create] payload: [${JSON.stringify(payload)}]`);
 
     const jokeType = await firstValueFrom(
-      this.client.send<ResponseDto<JokeTypeDto>>('fetchJokeTypeById', {
-        id: payload.joke_type_id,
-      }),
+      this.client.send<ResponseDto<JokeTypeDto>>(
+        MessagePatternTypes.DELIVER_SVC_FETCH_JOKE_TYPE_BY_ID,
+        {
+          id: payload.joke_type_id,
+        },
+      ),
     );
 
     this.logger.log(`[create] jokeType: [${JSON.stringify(jokeType)}]`);

@@ -5,6 +5,7 @@ import { JokeTypesController } from './joke-types.controller';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Joke } from '../entities/Joke.entity';
 import { JokeType } from '../entities/JokeType.entity';
+import { TCPController } from './tcp.controller';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { JokeType } from '../entities/JokeType.entity';
       entities: [Joke, JokeType],
     }),
   ],
-  controllers: [JokesController, JokeTypesController],
+  controllers: [JokesController, JokeTypesController, TCPController],
   providers: [JokesService],
 })
 export class JokesModule {}
