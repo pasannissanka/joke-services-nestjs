@@ -1,6 +1,6 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from './db/mikro-orm.config';
 import { DeliverJokesServiceController } from './deliver-jokes-service.controller';
 import { JokesModule } from './joke-module/jokes.module';
@@ -9,9 +9,14 @@ import { JokesModule } from './joke-module/jokes.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MikroOrmModule.forRootAsync({
-      useFactory: () => ({
+      useFactory: (configService: ConfigService) => ({
         ...config,
+        dbName: configService.get('MYSQL_DB_NAME'),
+        host: configService.get('MYSQL_DB_HOST'),
+        user: configService.get('MYSQL_DB_USER'),
+        password: configService.get('MYSQL_DB_PASSWORD'),
       }),
+      inject: [ConfigService],
     }),
     JokesModule,
   ],

@@ -5,10 +5,10 @@ import { SeedManager } from '@mikro-orm/seeder';
 
 const config: Options = {
   driver: MySqlDriver,
-  dbName: 'JOKES_DB',
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'app_user',
-  password: process.env.DB_PASSWORD || 'password',
+  dbName: process.env.MYSQL_DB_NAME,
+  host: process.env.MYSQL_DB_HOST,
+  user: process.env.MYSQL_DB_USER,
+  password: process.env.MYSQL_DB_PASSWORD,
   charset: 'utf8mb4',
   debug: true,
   entities: [Joke, JokeType],

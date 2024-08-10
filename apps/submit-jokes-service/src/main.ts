@@ -5,17 +5,20 @@ import {
   AllExceptionsFilter,
   HttpExceptionFilter,
 } from '../../../libs/common/src';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(SubmitJokesServiceModule);
 
-  const config = new DocumentBuilder()
+  const config = app.get(ConfigService);
+
+  const swaggerConfig = new DocumentBuilder()
     .setTitle('Submit jokes API')
     .setDescription('The submit jokes Microservice API')
     .setVersion('1.0')
     .addTag('jokes')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
 
   const httpAdapterHost = app.get(HttpAdapterHost);
@@ -23,6 +26,6 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  await app.listen(8003);
+  await app.listen(config.get('SUBMIT_SVC_PORT'));
 }
 bootstrap();
