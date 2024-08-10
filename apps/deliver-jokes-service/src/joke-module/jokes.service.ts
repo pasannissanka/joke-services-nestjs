@@ -1,9 +1,9 @@
+import { EnsureRequestContext, EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable, Logger } from '@nestjs/common';
-import { Joke } from '../entities/Joke.entity';
-import { EntityRepository } from '@mikro-orm/core';
-import { JokeType } from '../entities/JokeType.entity';
 import { CreateJokeDto, JokeDto, JokeTypeDto } from 'libs/types/src';
+import { Joke } from '../entities/Joke.entity';
+import { JokeType } from '../entities/JokeType.entity';
 
 @Injectable()
 export class JokesService {
@@ -16,13 +16,23 @@ export class JokesService {
     private readonly jokeTypeRepository: EntityRepository<JokeType>,
   ) {}
 
-  async paginate(page = 1, limit = 10): Promise<JokeDto[]> {
+  async paginateJokes(page = 1, limit = 10): Promise<JokeDto[]> {
     const jokes = await this.jokeRepository.find(
       {},
       { limit, offset: (page - 1) * limit, populate: ['type'] },
     );
 
     return jokes.map((joke) => JokeDto.fromEntity(joke));
+  }
+
+  @EnsureRequestContext<JokesService>((t) => t.jokeTypeRepository)
+  async paginateJokeTypes(page = 1, limit = 10): Promise<JokeTypeDto[]> {
+    const jokeTypes = await this.jokeTypeRepository.find(
+      {},
+      { limit, offset: (page - 1) * limit, populate: ['type'] },
+    );
+
+    return jokeTypes.map((joke) => JokeTypeDto.fromEntity(joke));
   }
 
   async getJokeById(id: string): Promise<JokeDto> {
@@ -70,6 +80,7 @@ export class JokesService {
     return newType;
   }
 
+  @EnsureRequestContext<JokesService>((t) => t.jokeTypeRepository)
   async getJokeTypeById(id: string): Promise<JokeTypeDto> {
     if (Number.isNaN(parseInt(id))) {
       throw new Error('Invalid joke type id');

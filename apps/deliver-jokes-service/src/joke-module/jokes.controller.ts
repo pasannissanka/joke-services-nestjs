@@ -11,7 +11,7 @@ export class JokesController {
     @Query('page') page: number,
     @Query('limit') limit: number,
   ): Promise<ResponseDto<JokeDto[]>> {
-    const data = await this.jokesService.paginate(page, limit);
+    const data = await this.jokesService.paginateJokes(page, limit);
 
     return ResponseDto.success(data, 'Jokes fetched successfully');
   }

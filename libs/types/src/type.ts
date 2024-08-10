@@ -3,12 +3,17 @@ import { Joke } from '../../../apps/deliver-jokes-service/src/entities/Joke.enti
 import { JokeType } from '../../../apps/deliver-jokes-service/src/entities/JokeType.entity';
 import { SubmittedJoke } from '../../../apps/submit-jokes-service/src/entities/submittedJoke.entity';
 
+export enum ResponseStatus {
+  SUCCESS = 'SUCCESS',
+  ERROR = 'ERROR',
+}
+
 export class ResponseDto<T> {
   @ApiProperty()
   message: string;
 
   @ApiProperty()
-  status: 'SUCCESS' | 'ERROR';
+  status: ResponseStatus;
 
   @ApiProperty()
   data: T;
@@ -19,7 +24,7 @@ export class ResponseDto<T> {
   static success<T>(data: T, message = 'Success'): ResponseDto<T> {
     return {
       message,
-      status: 'SUCCESS',
+      status: ResponseStatus.SUCCESS,
       data,
     };
   }
@@ -27,7 +32,7 @@ export class ResponseDto<T> {
   static error<T>(error: any, message = 'Error'): ResponseDto<T> {
     return {
       message,
-      status: 'ERROR',
+      status: ResponseStatus.ERROR,
       data: null,
       error,
     };
