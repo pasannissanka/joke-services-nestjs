@@ -1,7 +1,11 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DeliverJokesServiceModule } from './deliver-jokes-service.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import {
+  AllExceptionsFilter,
+  HttpExceptionFilter,
+} from '../../../libs/common/src';
 
 async function bootstrap() {
   const app = await NestFactory.create(DeliverJokesServiceModule);
@@ -22,6 +26,11 @@ async function bootstrap() {
       port: 8221,
     },
   });
+
+  const httpAdapterHost = app.get(HttpAdapterHost);
+
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.startAllMicroservices();
 
