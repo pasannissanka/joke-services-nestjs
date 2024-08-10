@@ -111,3 +111,11 @@ export class SubmittedJokeDto {
     return dto;
   }
 }
+
+export class AuthUserDto {
+  email: string;
+
+  constructor(partial: Partial<AuthUserDto>) {
+    Object.assign(this, partial);
+  }
+}
