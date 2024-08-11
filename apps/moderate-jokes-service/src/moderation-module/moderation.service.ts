@@ -73,4 +73,13 @@ export class ModerationService {
 
     return true;
   }
+
+  async fetchPendingJokes(page: number, limit: number) {
+    return firstValueFrom(
+      this.submitServiceClient.send<ResponseDto<SubmittedJokeDto[]>>(
+        MessagePatternTypes.SUBMIT_SVC_GET_NEW_JOKES,
+        { page, limit },
+      ),
+    );
+  }
 }

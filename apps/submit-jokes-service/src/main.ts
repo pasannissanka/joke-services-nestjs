@@ -10,6 +10,10 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(SubmitJokesServiceModule);
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    methods: 'GET,POST,PUT,DELETE',
+  });
 
   const config = app.get(ConfigService);
 

@@ -8,6 +8,10 @@ import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(ModerateJokesServiceModule);
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    methods: 'GET,POST,PUT,DELETE',
+  });
 
   const config = app.get(ConfigService);
 

@@ -9,11 +9,8 @@ export class JokeTypesController {
   constructor(private readonly jokesService: JokesService) {}
 
   @Get()
-  async paginateTypes(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-  ): Promise<ResponseDto<JokeTypeDto[]>> {
-    const data = await this.jokesService.paginateJokeTypes(page, limit);
+  async getAllTypes(): Promise<ResponseDto<JokeTypeDto[]>> {
+    const data = await this.jokesService.getAllJokeTypes();
 
     return ResponseDto.success(data);
   }

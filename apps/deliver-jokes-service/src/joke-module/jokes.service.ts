@@ -26,11 +26,8 @@ export class JokesService {
   }
 
   @EnsureRequestContext<JokesService>((t) => t.jokeTypeRepository)
-  async paginateJokeTypes(page = 1, limit = 10): Promise<JokeTypeDto[]> {
-    const jokeTypes = await this.jokeTypeRepository.find(
-      {},
-      { limit, offset: (page - 1) * limit, populate: ['type'] },
-    );
+  async getAllJokeTypes(): Promise<JokeTypeDto[]> {
+    const jokeTypes = await this.jokeTypeRepository.find({});
 
     return jokeTypes.map((joke) => JokeTypeDto.fromEntity(joke));
   }
@@ -49,10 +46,19 @@ export class JokesService {
   }
 
   async getRandomJoke(): Promise<JokeDto> {
-    const joke = await this.jokeRepository.findOneOrFail(
-      {},
-      { orderBy: { id: 'ASC' }, populate: ['type'] },
-    );
+    const count = await this.jokeRepository.count();
+
+    let tries = 1;
+    let joke = await this._fetchRandomJoke(count);
+
+    if (!joke) {
+      joke = await this._fetchRandomJoke(count);
+
+      tries++;
+      if (tries > 3) {
+        throw new Error('Failed to fetch random joke');
+      }
+    }
 
     return JokeDto.fromEntity(joke);
   }
@@ -114,5 +120,15 @@ export class JokesService {
     );
 
     return jokes.map((joke) => JokeDto.fromEntity(joke));
+  }
+
+  private async _fetchRandomJoke(count: number) {
+    const randomId = Math.floor(Math.random() * count);
+
+    const joke = await this.jokeRepository.findOne(
+      { id: randomId },
+      { populate: ['type'] },
+    );
+    return joke;
   }
 }

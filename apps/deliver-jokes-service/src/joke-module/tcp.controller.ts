@@ -24,12 +24,9 @@ export class TCPController {
   }
 
   @MessagePattern(MessagePatternTypes.DELIVER_SVC_FETCH_JOKE_TYPES)
-  async fetchJokeTypes(payload: { limit: number; page: number }) {
-    this.logger.log(`[fetchJokeTypes] payload: [${JSON.stringify(payload)}]`);
-    const data = await this.jokesService.paginateJokeTypes(
-      payload.page,
-      payload.limit,
-    );
+  async fetchJokeTypes() {
+    this.logger.log(`[${MessagePatternTypes.DELIVER_SVC_FETCH_JOKE_TYPES}]`);
+    const data = await this.jokesService.getAllJokeTypes();
 
     return ResponseDto.success(data);
   }

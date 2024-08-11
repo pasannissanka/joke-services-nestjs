@@ -36,6 +36,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     this.logger.error(
       `Unhandled Exception: ${JSON.stringify(exception)}, path: ${path}`,
     );
+    this.logger.error(exception);
 
     const response = ResponseDto.error({
       message: message,
