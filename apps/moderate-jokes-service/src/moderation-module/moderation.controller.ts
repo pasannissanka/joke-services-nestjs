@@ -8,10 +8,13 @@ export class ModerationController {
 
   @Get()
   async paginateJokes(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
   ): Promise<ResponseDto<SubmittedJokeDto[]>> {
-    return this.moderationService.fetchPendingJokes(page, limit);
+    return this.moderationService.fetchPendingJokes(
+      parseInt(page),
+      parseInt(limit),
+    );
   }
 
   @Post(':id/accept')

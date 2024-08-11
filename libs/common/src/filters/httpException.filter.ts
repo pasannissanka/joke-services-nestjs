@@ -19,6 +19,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
 
     this.logger.error(`Exception: ${exception}, path: ${request.url}`);
+    this.logger.error(exception);
 
     const responseBody = ResponseDto.error({
       message: exception.message,

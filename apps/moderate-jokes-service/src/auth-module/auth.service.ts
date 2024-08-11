@@ -29,12 +29,12 @@ export class AuthService {
       email: loggedUser.email,
     };
 
-    return ResponseDto.success({
-      message: 'Logged in',
-      data: {
+    return ResponseDto.success(
+      {
         user: new AuthUserDto({ email: payload.email }),
         access_token: this.jwtService.sign(payload),
       },
-    });
+      'Logged in',
+    );
   }
 }

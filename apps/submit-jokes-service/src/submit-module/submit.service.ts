@@ -61,7 +61,25 @@ export class SubmitService {
       { limit, offset: (page - 1) * limit },
     );
 
-    return jokes.map((joke) => SubmittedJokeDto.fromEntity(joke));
+    const jokesWithJokeType = await Promise.all(
+      jokes.map(async (joke) => {
+        const jokeType = await firstValueFrom(
+          this.client.send<ResponseDto<JokeTypeDto>>(
+            MessagePatternTypes.DELIVER_SVC_FETCH_JOKE_TYPE_BY_ID,
+            {
+              id: joke.joke_type_id.toString(),
+            },
+          ),
+        );
+
+        return {
+          ...joke,
+          jokeType: jokeType.data,
+        };
+      }),
+    );
+
+    return jokesWithJokeType.map((joke) => SubmittedJokeDto.fromEntity(joke));
   }
 
   @EnsureRequestContext<SubmitService>((t) => t.submitJokeRepository)

@@ -101,12 +101,20 @@ export class SubmittedJokeDto {
   @ApiProperty()
   joke_type_id: string;
 
-  static fromEntity(data: SubmittedJoke) {
+  @ApiProperty()
+  jokeType?: JokeTypeDto;
+
+  static fromEntity(data: SubmittedJoke & { jokeType?: JokeTypeDto }) {
     const dto = new SubmittedJokeDto();
 
-    dto.id = data.id;
+    dto.id = data.id
+      ? data.id
+      : data._id.toString()
+        ? data._id.toString()
+        : null;
     dto.joke = data.joke;
     dto.joke_type_id = data.joke_type_id?.toString();
+    dto.jokeType = data?.jokeType;
 
     return dto;
   }
