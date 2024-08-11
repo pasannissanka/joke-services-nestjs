@@ -2,7 +2,9 @@ import { Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ModerationService } from './moderation.service';
 import { ResponseDto, SubmittedJokeDto } from '../../../../libs/types/src';
 import { JwtAuthGuard } from '../auth-module/guards/jwt-auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('moderation')
 @Controller('v1/moderation/pending-jokes')
 export class ModerationController {
   constructor(private readonly moderationService: ModerationService) {}

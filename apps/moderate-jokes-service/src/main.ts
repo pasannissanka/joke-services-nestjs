@@ -5,6 +5,7 @@ import {
   HttpExceptionFilter,
 } from '../../../libs/common/src';
 import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(ModerateJokesServiceModule);
@@ -14,6 +15,15 @@ async function bootstrap() {
   });
 
   const config = app.get(ConfigService);
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Moderate jokes API')
+    .setDescription('The submit jokes Microservice API')
+    .setVersion('1.0')
+    .addTag('jokes')
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api', app, document);
 
   const httpAdapterHost = app.get(HttpAdapterHost);
 
