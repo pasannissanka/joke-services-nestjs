@@ -45,6 +45,22 @@ yarn install
 
 Copy the .env.example file is available in root of the project, that shared between services, rename it to .env. Update the environment variables as needed.
 
+#### DB setup
+
+MySQL database is used for deliver-jokes-service. MongoDB is used for submit-jokes-service.
+MySQL database schema and seed data can be applied using the following command:
+
+```bash
+# root directory
+# Schema generation - update env variables accordingly
+npx mikro-orm schema:create --config ./apps/deliver-jokes-service/src/db/mikro-orm.config.ts -r
+
+# Seed data
+npx mikro-orm seeder:run --config ./apps/deliver-jokes-service/src/db/mikro-orm.config.ts
+
+```
+
+
 ### Running the Project
 
 #### Running Microservices Locally
@@ -118,7 +134,6 @@ Example
 For a request-response communication pattern using TCP:
 
 ```typescript
-Copy code
 // In the sender service
 const result = await firstValueFrom(
   this.submitServiceClient.send<ResponseDto<SubmittedJokeDto>>(
