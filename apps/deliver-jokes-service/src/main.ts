@@ -29,7 +29,7 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
-      host: '127.0.0.1',
+      host: config.get('DELIVER_SVC_HOST'),
       port: parseInt(config.get('DELIVER_SVC_TCP_PORT')),
     },
   });

@@ -7,8 +7,27 @@ services:
       args:
         - APP=deliver-jokes-service
     restart: always
+    links:
+      - db
+    environment:
+      - DELIVER_SVC_HOST=deliver-jokes-service
+      - SUBMIT_SVC_HOST=submit-jokes-service
+      - MODERATE_SVC_HOST=moderate-jokes-service
+      - DELIVER_SVC_PORT=8001
+      - DELIVER_SVC_TCP_PORT=8221
+      - MODERATE_SVC_PORT=8002
+      - MODERATE_SVC_TCP_PORT=8222
+      - SUBMIT_SVC_PORT=8003
+      - SUBMIT_SVC_TCP_PORT=8223
+      - MYSQL_DB_NAME=JOKES_DB
+      - MYSQL_DB_HOST=db # Add mysql
+      - MYSQL_DB_USER=user
+      - MYSQL_DB_PASSWORD=user
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
-      - 3000:8001
+      - 3001:8001
+      - "8221:8221/tcp"
   submit-jokes-service:
     container_name: submit-jokes-service
     build:
@@ -16,8 +35,26 @@ services:
       args:
         - APP=submit-jokes-service
     restart: always
+    links:
+      - deliver-jokes-service
+      - mongo
+    environment:
+      - DELIVER_SVC_HOST=deliver-jokes-service
+      - SUBMIT_SVC_HOST=submit-jokes-service
+      - MODERATE_SVC_HOST=moderate-jokes-service
+      - DELIVER_SVC_PORT=8001
+      - DELIVER_SVC_TCP_PORT=8221
+      - MODERATE_SVC_PORT=8002
+      - MODERATE_SVC_TCP_PORT=8222
+      - SUBMIT_SVC_PORT=8003
+      - SUBMIT_SVC_TCP_PORT=8223
+      - MONGO_DB_NAME=JOKES_SUBMIT_DB
+      - MONGO_DB_URL=mongodb://root:password@mongo:27017/
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
-      - 3001:8003
+      - 3003:8003
+      - "8223:8223/tcp"
   moderate-jokes-service:
     container_name: moderate-jokes-service
     build:
@@ -25,6 +62,40 @@ services:
       args:
         - APP=moderate-jokes-service
     restart: always
+    links:
+      - submit-jokes-service
+      - deliver-jokes-service
+    environment:
+      - DELIVER_SVC_HOST=deliver-jokes-service
+      - SUBMIT_SVC_HOST=submit-jokes-service
+      - MODERATE_SVC_HOST=moderate-jokes-service
+      - DELIVER_SVC_PORT=8001
+      - DELIVER_SVC_TCP_PORT=8221
+      - MODERATE_SVC_PORT=8002
+      - MODERATE_SVC_TCP_PORT=8222
+      - SUBMIT_SVC_PORT=8003
+      - SUBMIT_SVC_TCP_PORT=8223
+      - JWT_SECRET=secret
+      - JWT_EXPIRE_IN=3h
+      - DEFAULT_LOGIN_USERNAME=admin@admin.com
+      - DEFAULT_LOGIN_PASSWORD=password
     ports:
       - 3002:8002
-  
+      - "8222:8222/tcp"
+  db:
+    image: mysql
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: JOKES_DB
+        MYSQL_USER: user
+        MYSQL_PASSWORD: user
+    volumes: 
+        - ./init/01.sql:/docker-entrypoint-initdb.d/1.sql
+        - ./init/02.sql:/docker-entrypoint-initdb.d/2.sql
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
